@@ -1,4 +1,29 @@
-# Miscellaneous
+# Flutter / Dart
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+/.idea/
+
+# macOS
+.DS_Store
+
+# Android
+local.properties
+
+# iOS
+Pods/
+
+# Ignore all Markdown files by default
+*.md
+
+# But keep the project README and main documentation
+!README.md
+!DOCUMENTATION.md
+
+# Ignore generated firebase options if desired (optional)
+# lib/firebase_options.dart# Miscellaneous
 *.class
 *.log
 *.pyc

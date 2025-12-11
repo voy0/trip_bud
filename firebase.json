@@ -1,0 +1,31 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "tripbud-3799b",
+                    "appId": "1:274607135930:android:5a41ecbd9cebbdb3b67683",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "tripbud-3799b",
+                    "configurations": {
+                        "android": "1:274607135930:android:5a41ecbd9cebbdb3b67683",
+                        "ios": "1:274607135930:ios:f48b3dcb31559d92b67683",
+                        "macos": "1:274607135930:ios:f48b3dcb31559d92b67683",
+                        "web": "1:274607135930:web:741a1a24d8671601b67683",
+                        "windows": "1:274607135930:web:81e0710d63a43bc6b67683"
+                    }
+                }
+            }
+        }
+    },
+    "firestore": {
+        "database": "(default)",
+        "location": "eur3",
+        "rules": "firestore.rules",
+        "indexes": "firestore.indexes.json"
+    }
+}

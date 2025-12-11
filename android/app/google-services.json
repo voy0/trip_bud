@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "274607135930",
+    "project_id": "tripbud-3799b",
+    "storage_bucket": "tripbud-3799b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:274607135930:android:5a41ecbd9cebbdb3b67683",
+        "android_client_info": {
+          "package_name": "com.example.trip_bud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "274607135930-kchjmeog4of2c6sa3f257fikbi92jl4h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDM32vPNCrSxJp4hpx4yEMaa_ujVW9n0BE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "274607135930-kchjmeog4of2c6sa3f257fikbi92jl4h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "274607135930-15sk52sqgg3mh13tnc6fs8se3pchj0ft.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tripBud"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
