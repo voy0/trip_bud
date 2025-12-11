@@ -148,7 +148,6 @@ class FirestoreTripDataService extends TripDataService {
   @override
   Future<void> deleteTrip(String tripId) async {
     await _tripsRef.doc(tripId).delete();
-    // Optionally delete photo subcollection documents; omitted for simplicity.
   }
 
   @override
@@ -168,7 +167,6 @@ class FirestoreTripDataService extends TripDataService {
     final data = Map<String, dynamic>.from(photo.toMap());
     data['takenAt'] = fr.Timestamp.fromDate(photo.takenAt);
     await photosCol.add(data);
-    // Increment photosCount in the trip stats (best-effort, serverTimestamp used for updatedAt)
     await _tripsRef.doc(photo.tripId).set({
       'updatedAt': fr.FieldValue.serverTimestamp(),
     }, fr.SetOptions(merge: true));
