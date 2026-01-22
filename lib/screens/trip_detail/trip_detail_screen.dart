@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trip_bud/models/trip.dart';
 import 'package:trip_bud/services/trip_data_service.dart';
+import 'package:trip_bud/widgets/place_map.dart';
 
 class TripDetailScreen extends StatefulWidget {
   final String tripId;
@@ -170,26 +171,20 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   }
 
   Widget _buildMapTab(Trip trip) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.map, size: 80, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            const Text(
-              'Map View',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Map integration coming soon!\n${trip.places.length} places to explore',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ],
-        ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Map View',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+          PlaceMap(places: trip.places, height: 360),
+          const SizedBox(height: 12),
+          Text('${trip.places.length} places on the map'),
+        ],
       ),
     );
   }

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trip_bud/models/trip.dart';
+import 'package:trip_bud/widgets/place_autocomplete.dart';
+import 'package:trip_bud/widgets/place_map.dart';
+import 'package:trip_bud/widgets/date_range_picker.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trip_bud/services/auth_service.dart';
 import 'package:trip_bud/services/trip_data_service.dart';
 
@@ -27,6 +31,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   final _placeCountryController = TextEditingController();
   final _placeLatController = TextEditingController();
   final _placeLonController = TextEditingController();
+  PlaceSelection? _currentSelection;
 
   bool _isLoading = false;
 
@@ -48,40 +53,39 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     super.dispose();
   }
 
-  void _selectStartDate() async {
-    final date = await showDatePicker(
+  void _selectDateRange() async {
+    showDialog(
       context: context,
-      initialDate: _startDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context) => DateRangePicker(
+        initialStart: _startDate,
+        initialEnd: _endDate,
+        onDateRangeSelected: (start, end) {
+          setState(() {
+            _startDate = start;
+            _endDate = end;
+          });
+        },
+      ),
     );
-    if (date != null) {
-      setState(() => _startDate = date);
-    }
-  }
-
-  void _selectEndDate() async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: _endDate ?? (_startDate ?? DateTime.now()),
-      firstDate: _startDate ?? DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-    if (date != null) {
-      setState(() => _endDate = date);
-    }
   }
 
   void _addPlace() {
     if (_placeNameController.text.isEmpty ||
-        _placeCountryController.text.isEmpty ||
-        _placeLatController.text.isEmpty ||
-        _placeLonController.text.isEmpty) {
+        _placeCountryController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
       return;
     }
+    // prefer current selection coordinates if available
+    final lat =
+        _currentSelection?.latitude ??
+        double.tryParse(_placeLatController.text) ??
+        0.0;
+    final lon =
+        _currentSelection?.longitude ??
+        double.tryParse(_placeLonController.text) ??
+        0.0;
 
     setState(() {
       _places.add(
@@ -89,8 +93,8 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
           id: 'place_${_places.length}',
           name: _placeNameController.text,
           country: _placeCountryController.text,
-          latitude: double.parse(_placeLatController.text),
-          longitude: double.parse(_placeLonController.text),
+          latitude: lat,
+          longitude: lon,
           plannedDate: _startDate ?? DateTime.now(),
           plannedDuration: const Duration(hours: 2),
         ),
@@ -99,6 +103,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
       _placeCountryController.clear();
       _placeLatController.clear();
       _placeLonController.clear();
+      _currentSelection = null;
     });
   }
 
@@ -340,32 +345,14 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
           const SizedBox(height: 24),
           const Text('Trip Dates'),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _selectStartDate,
-                  icon: const Icon(Icons.calendar_today),
-                  label: Text(
-                    _startDate != null
-                        ? '${_startDate!.month}/${_startDate!.day}/${_startDate!.year}'
-                        : 'Start Date',
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _selectEndDate,
-                  icon: const Icon(Icons.calendar_today),
-                  label: Text(
-                    _endDate != null
-                        ? '${_endDate!.month}/${_endDate!.day}/${_endDate!.year}'
-                        : 'End Date',
-                  ),
-                ),
-              ),
-            ],
+          ElevatedButton.icon(
+            onPressed: _selectDateRange,
+            icon: const Icon(Icons.calendar_today),
+            label: Text(
+              _startDate != null && _endDate != null
+                  ? '${_startDate!.month}/${_startDate!.day}/${_startDate!.year} - ${_endDate!.month}/${_endDate!.day}/${_endDate!.year}'
+                  : 'Select dates',
+            ),
           ),
         ],
       ),
@@ -383,62 +370,43 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          TextField(
-            controller: _placeNameController,
-            decoration: InputDecoration(
-              labelText: 'Place Name',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+          // Autocomplete search for places (Google Places)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: PlaceAutocomplete(
+              hintText: 'Search place',
+              onPlaceSelected: (sel) {
+                _currentSelection = sel;
+                _placeNameController.text = sel.name;
+                _placeCountryController.text = sel.country;
+                _placeLatController.text = sel.latitude.toString();
+                _placeLonController.text = sel.longitude.toString();
+                // Automatically add the place
+                _addPlace();
+              },
             ),
           ),
           const SizedBox(height: 12),
-          TextField(
-            controller: _placeCountryController,
-            decoration: InputDecoration(
-              labelText: 'Country',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+          // Map showing all added places
+          if (_places.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Trip Map (${_places.length} place(s))',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  PlaceMap(places: _places, height: 280),
+                ],
               ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _placeLatController,
-                  decoration: InputDecoration(
-                    labelText: 'Latitude',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TextField(
-                  controller: _placeLonController,
-                  decoration: InputDecoration(
-                    labelText: 'Longitude',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-            ],
-          ),
           const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: _addPlace,
-            icon: const Icon(Icons.add),
-            label: const Text('Add Place'),
-          ),
-          const SizedBox(height: 24),
           const Text('Added Places'),
           const SizedBox(height: 12),
           ListView.builder(
