@@ -4,7 +4,6 @@ import 'package:trip_bud/models/trip.dart';
 import 'package:trip_bud/widgets/place_autocomplete.dart';
 import 'package:trip_bud/widgets/place_map.dart';
 import 'package:trip_bud/widgets/date_range_picker.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trip_bud/services/auth_service.dart';
 import 'package:trip_bud/services/trip_data_service.dart';
 

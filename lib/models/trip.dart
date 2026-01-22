@@ -179,6 +179,7 @@ class ScheduledPlace {
   final Duration estimatedDuration;
   final bool visited;
   final DateTime? actualArrivalTime;
+  final String transportationMode; // 'walk', 'bike', or 'drive'
 
   ScheduledPlace({
     required this.placeId,
@@ -186,6 +187,7 @@ class ScheduledPlace {
     required this.estimatedDuration,
     required this.visited,
     this.actualArrivalTime,
+    this.transportationMode = 'drive',
   });
 
   factory ScheduledPlace.fromMap(Map<String, dynamic> map) {
@@ -203,6 +205,7 @@ class ScheduledPlace {
                 ? map['actualArrivalTime']
                 : DateTime.parse(map['actualArrivalTime'].toString()))
           : null,
+      transportationMode: map['transportationMode'] ?? 'drive',
     );
   }
 
@@ -213,6 +216,7 @@ class ScheduledPlace {
       'estimatedDurationMinutes': estimatedDuration.inMinutes,
       'visited': visited,
       'actualArrivalTime': actualArrivalTime?.toIso8601String(),
+      'transportationMode': transportationMode,
     };
   }
 }

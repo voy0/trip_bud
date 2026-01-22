@@ -100,16 +100,12 @@ class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
               .toList();
           setState(() => _suggestions = preds);
         } else {
-          print('Places API Status: $status');
-          print('API Response: ${res.body}');
           setState(() => _suggestions = []);
         }
       } else {
-        print('HTTP Error: ${res.statusCode} - ${res.body}');
         setState(() => _suggestions = []);
       }
     } catch (e) {
-      print('Error fetching suggestions: $e');
       setState(() => _suggestions = []);
     } finally {
       setState(() => _loading = false);
@@ -174,7 +170,7 @@ class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
         }
       }
     } catch (e) {
-      print('Error selecting suggestion: $e');
+      // Handle error silently
     } finally {
       setState(() => _loading = false);
     }
