@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trip_bud/l10n/app_localizations.dart';
 import 'package:trip_bud/models/trip.dart';
 import 'package:trip_bud/widgets/place_autocomplete.dart';
 import 'package:trip_bud/widgets/place_map.dart';
@@ -73,7 +74,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
         _placeCountryController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).pleaseFillAllFields)));
       return;
     }
     // prefer current selection coordinates if available
@@ -114,13 +115,13 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     if (_tripNameController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Please enter trip name')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).pleaseEnterTripName)));
       return false;
     }
     if (_startDate == null || _endDate == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Please select dates')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).pleaseSelectDates)));
       return false;
     }
     if (_startDate!.isAfter(_endDate!)) {
@@ -231,7 +232,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Trip')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).createTripTitle)),
       body: Column(
         children: [
           Padding(
@@ -284,7 +285,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: _previousStep,
-                      child: const Text('Back'),
+                      child: Text(AppLocalizations.of(context).backButton),
                     ),
                   ),
                 if (_currentStep > 0) const SizedBox(width: 16),
@@ -342,7 +343,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          const Text('Trip Dates'),
+          Text(AppLocalizations.of(context).tripDates),
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: _selectDateRange,
@@ -394,7 +395,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Trip Map (${_places.length} place(s))',
+                    '${AppLocalizations.of(context).tripMapTitle} (${_places.length} place(s))',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -406,7 +407,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
               ),
             ),
           const SizedBox(height: 16),
-          const Text('Added Places'),
+          Text(AppLocalizations.of(context).addedPlaces),
           const SizedBox(height: 12),
           ListView.builder(
             shrinkWrap: true,
@@ -518,7 +519,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          const Text('Places you\'ll visit:'),
+          Text(AppLocalizations.of(context).placesYouWillVisit),
           const SizedBox(height: 12),
           ListView.builder(
             shrinkWrap: true,

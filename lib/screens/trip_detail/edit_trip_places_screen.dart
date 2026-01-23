@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:trip_bud/models/trip.dart';
 import 'package:trip_bud/widgets/place_autocomplete.dart';
 import 'package:trip_bud/widgets/place_map.dart';
+import 'package:trip_bud/l10n/app_localizations.dart';
 import 'package:trip_bud/services/trip_data_service.dart';
 
 class EditTripPlacesScreen extends StatefulWidget {
@@ -82,14 +83,14 @@ class _EditTripPlacesScreenState extends State<EditTripPlacesScreen> {
       if (mounted) {
         Navigator.pop(context, true);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Places updated successfully')),
+          SnackBar(content: Text(AppLocalizations.of(context).placesUpdatedSuccessfully)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ).showSnackBar(SnackBar(content: Text('${AppLocalizations.of(context).error}$e')));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -100,7 +101,7 @@ class _EditTripPlacesScreenState extends State<EditTripPlacesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Places'),
+        title: Text(AppLocalizations.of(context).editPlaces),
         actions: [
           if (_isLoading)
             const Center(
@@ -116,7 +117,7 @@ class _EditTripPlacesScreenState extends State<EditTripPlacesScreen> {
           else
             TextButton(
               onPressed: _places.isEmpty ? null : _saveChanges,
-              child: const Text('Save'),
+              child: Text(AppLocalizations.of(context).save),
             ),
         ],
       ),
@@ -125,13 +126,13 @@ class _EditTripPlacesScreenState extends State<EditTripPlacesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Add Places',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context).addPlaces,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             PlaceAutocomplete(
-              hintText: 'Search place',
+              hintText: AppLocalizations.of(context).searchPlaceText,
               onPlaceSelected: _addPlace,
             ),
             const SizedBox(height: 24),
@@ -140,7 +141,7 @@ class _EditTripPlacesScreenState extends State<EditTripPlacesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Trip Map (${_places.length} place(s))',
+                    '${AppLocalizations.of(context).tripMapTitle} (${_places.length} place(s))',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,

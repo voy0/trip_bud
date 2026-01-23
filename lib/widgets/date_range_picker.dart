@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:trip_bud/l10n/app_localizations.dart';
 
 class DateRangePicker extends StatefulWidget {
   final DateTime? initialStart;
@@ -151,7 +152,7 @@ class _DateRangePickerState extends State<DateRangePicker> {
                 children: [
                   OutlinedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
+                    child: Text(AppLocalizations.of(context).cancel),
                   ),
                   if (_startDate != null && _endDate != null)
                     ElevatedButton(
@@ -159,7 +160,7 @@ class _DateRangePickerState extends State<DateRangePicker> {
                         widget.onDateRangeSelected(_startDate!, _endDate!);
                         Navigator.pop(context);
                       },
-                      child: const Text('Confirm'),
+                      child: Text(AppLocalizations.of(context).confirm),
                     ),
                 ],
               ),

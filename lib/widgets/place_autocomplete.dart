@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:trip_bud/l10n/app_localizations.dart';
 import 'package:trip_bud/constants/google_api_key.dart';
 
 class PlaceSuggestion {
@@ -232,7 +233,7 @@ class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.add),
-              label: const Text('Add'),
+              label: Text(AppLocalizations.of(context).add),
             ),
           ],
         ),
@@ -298,10 +299,10 @@ class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
             !_loading)
           Container(
             padding: const EdgeInsets.symmetric(vertical: 16),
-            child: const Center(
+            child: Center(
               child: Text(
-                'No places found. Try a different search.',
-                style: TextStyle(color: Colors.grey, fontSize: 13),
+                AppLocalizations.of(context).noPlacesFound,
+                style: const TextStyle(color: Colors.grey, fontSize: 13),
               ),
             ),
           ),

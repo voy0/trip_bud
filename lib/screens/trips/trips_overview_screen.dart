@@ -3,9 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:trip_bud/models/trip.dart';
 import 'package:trip_bud/services/auth_service.dart';
 import 'package:trip_bud/services/trip_data_service.dart';
+import 'package:trip_bud/screens/trips/active_trip_screen.dart';
+import 'package:trip_bud/l10n/app_localizations.dart';
 
 class TripsOverviewScreen extends StatefulWidget {
-  const TripsOverviewScreen({super.key});
+  final Function(Locale) onLocaleChange;
+
+  const TripsOverviewScreen({super.key, required this.onLocaleChange});
 
   @override
   State<TripsOverviewScreen> createState() => _TripsOverviewScreenState();
@@ -50,32 +54,23 @@ class _TripsOverviewScreenState extends State<TripsOverviewScreen> {
     });
   }
 
-  void _handleLogout() async {
-    final authService = context.read<AuthService>();
-    await authService.logout();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
+  void _showSettingsDialog() {
+    Navigator.of(context).pushNamed('/profile');
   }
 
   @override
   Widget build(BuildContext context) {
     final authService = context.read<AuthService>();
+    final loc = AppLocalizations.of(context);
     authService.getCurrentUser();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Trips'),
+        title: Text(loc.trips),
         actions: [
-          PopupMenuButton(
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 'logout', child: Text('Logout')),
-            ],
-            onSelected: (value) {
-              if (value == 'logout') {
-                _handleLogout();
-              }
-            },
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _showSettingsDialog,
           ),
         ],
       ),
@@ -99,9 +94,9 @@ class _TripsOverviewScreenState extends State<TripsOverviewScreen> {
                 children: [
                   Icon(Icons.map, size: 80, color: Colors.grey[300]),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     'No trips yet',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: Colors.grey,
@@ -116,7 +111,7 @@ class _TripsOverviewScreenState extends State<TripsOverviewScreen> {
                   ElevatedButton.icon(
                     onPressed: _navigateToCreateTrip,
                     icon: const Icon(Icons.add),
-                    label: const Text('Create Trip'),
+                    label: Text(loc.createTrip),
                   ),
                 ],
               ),
@@ -152,6 +147,7 @@ class TripCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final daysDifference = trip.endDate.difference(trip.startDate).inDays;
 
     return Card(
@@ -191,25 +187,52 @@ class TripCard extends StatelessWidget {
             ),
           ],
         ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: trip.isActive ? Colors.green[100] : Colors.grey[100],
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                trip.isActive ? 'Active' : 'Planned',
-                style: TextStyle(
-                  color: trip.isActive ? Colors.green[700] : Colors.grey[700],
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+        trailing: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 85),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                decoration: BoxDecoration(
+                  color: trip.isActive ? Colors.green[100] : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                child: Text(
+                  trip.isActive ? loc.active : loc.planned,
+                  style: TextStyle(
+                    color: trip.isActive ? Colors.green[700] : Colors.grey[700],
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-          ],
+              if (!trip.isActive)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (c) => ActiveTripScreen(trip: trip),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(50, 20),
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      backgroundColor: const Color.fromARGB(255, 0, 200, 120),
+                    ),
+                    child: const Text(
+                      'Start',
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
         onTap: onTap,
       ),

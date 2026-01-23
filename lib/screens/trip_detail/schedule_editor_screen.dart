@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:trip_bud/models/trip.dart';
 import 'package:trip_bud/services/trip_data_service.dart';
 import 'package:trip_bud/services/distance_time_service.dart';
+import 'package:trip_bud/l10n/app_localizations.dart';
 
 class ScheduleEditorScreen extends StatefulWidget {
   final Trip trip;
@@ -190,7 +191,7 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Schedule Editor'),
+        title: Text(AppLocalizations.of(context).scheduleEditor),
         actions: [
           if (_isLoading)
             const Center(
@@ -204,7 +205,10 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
               ),
             )
           else
-            TextButton(onPressed: _saveSchedule, child: const Text('Save')),
+            TextButton(
+              onPressed: _saveSchedule,
+              child: Text(AppLocalizations.of(context).save),
+            ),
         ],
       ),
       body: _isLoading
@@ -268,9 +272,12 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    'Assign Days to Places',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Text(
+                    AppLocalizations.of(context).assignDaysToPlaces,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -380,7 +387,7 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 8),
                                   child: Text(
-                                    'Maximum days reached (${_totalDaysAssigned}/$_totalDaysInTrip)',
+                                    'Maximum days reached ($_totalDaysAssigned/$_totalDaysInTrip)',
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.orange,
@@ -408,7 +415,7 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                                             icon: const Icon(
                                               Icons.directions_walk,
                                             ),
-                                            label: const Text('Walk'),
+                                            label: Text(AppLocalizations.of(context).walk),
                                             onPressed:
                                                 _transportationModes[index] !=
                                                     'walking'
@@ -434,7 +441,7 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                                         Expanded(
                                           child: OutlinedButton.icon(
                                             icon: const Icon(Icons.pedal_bike),
-                                            label: const Text('Bike'),
+                                            label: Text(AppLocalizations.of(context).bike),
                                             onPressed:
                                                 _transportationModes[index] !=
                                                     'bicycling'
@@ -462,7 +469,7 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                                             icon: const Icon(
                                               Icons.directions_car,
                                             ),
-                                            label: const Text('Drive'),
+                                            label: Text(AppLocalizations.of(context).drive),
                                             onPressed:
                                                 _transportationModes[index] !=
                                                     'driving'
@@ -598,7 +605,7 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Total Days:'),
+                              Text(AppLocalizations.of(context).totalDays),
                               Text(
                                 '${_daysPerPlace.fold<int>(0, (sum, days) => sum + days)}',
                                 style: const TextStyle(
@@ -611,7 +618,7 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Total Distance:'),
+                              Text(AppLocalizations.of(context).totalDistance),
                               Text(
                                 '${DistanceTimeService.getTotalDistance(_routes).toStringAsFixed(1)} km',
                                 style: const TextStyle(
@@ -624,7 +631,7 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Travel Time:'),
+                              Text(AppLocalizations.of(context).travelTime),
                               Text(
                                 DistanceTimeService.formatDuration(
                                   DistanceTimeService.getTotalTime(_routes),

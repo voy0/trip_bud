@@ -13,6 +13,8 @@ class PlaceMap extends StatefulWidget {
   final String? singleLabel;
   final double height;
   final List<String>? transportationModes; // Optional modes for each leg
+  final bool allowInteraction; // Allow map zooming and panning
+  final bool showFullscreenButton; // show a fullscreen toggle for this map
 
   const PlaceMap({
     super.key,
@@ -21,6 +23,8 @@ class PlaceMap extends StatefulWidget {
     this.singleLabel,
     this.height = 200,
     this.transportationModes,
+    this.allowInteraction = false,
+    this.showFullscreenButton = true,
   });
 
   @override
@@ -203,16 +207,68 @@ class _PlaceMapState extends State<PlaceMap> {
         child: FutureBuilder<Set<Polyline>>(
           future: _polylinesFuture,
           builder: (context, snapshot) {
-            return GoogleMap(
-              initialCameraPosition: _kDefault,
-              markers: _buildMarkers(),
-              polylines: snapshot.data ?? {},
-              onMapCreated: (controller) {
-                if (!_controller.isCompleted) _controller.complete(controller);
-                _moveCameraIfNeeded();
-              },
-              myLocationEnabled: false,
-              zoomControlsEnabled: true,
+            return Stack(
+              children: [
+                GoogleMap(
+                  initialCameraPosition: _kDefault,
+                  markers: _buildMarkers(),
+                  polylines: snapshot.data ?? {},
+                  onMapCreated: (controller) {
+                    if (!_controller.isCompleted) {
+                      _controller.complete(controller);
+                    }
+                    _moveCameraIfNeeded();
+                  },
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                  zoomControlsEnabled: true,
+                  scrollGesturesEnabled: widget.allowInteraction,
+                  rotateGesturesEnabled: widget.allowInteraction,
+                  zoomGesturesEnabled: widget.allowInteraction,
+                  tiltGesturesEnabled: widget.allowInteraction,
+                ),
+                if (widget.showFullscreenButton)
+                  Positioned(
+                    bottom: 8,
+                    left: 8,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(24),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => Scaffold(
+                                appBar: AppBar(
+                                  title: Text(widget.singleLabel ?? 'Map'),
+                                  centerTitle: true,
+                                ),
+                                body: SafeArea(
+                                  child: PlaceMap(
+                                    places: widget.places,
+                                    singleLocation: widget.singleLocation,
+                                    singleLabel: widget.singleLabel,
+                                    allowInteraction: true,
+                                    height: MediaQuery.of(ctx).size.height,
+                                    showFullscreenButton: false,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.open_in_full, size: 20),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             );
           },
         ),

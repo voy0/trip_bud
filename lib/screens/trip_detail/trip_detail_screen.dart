@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trip_bud/l10n/app_localizations.dart';
 import 'package:trip_bud/models/trip.dart';
 import 'package:trip_bud/services/trip_data_service.dart';
 import 'package:trip_bud/services/distance_time_service.dart';
 import 'package:trip_bud/widgets/place_map.dart';
+import 'package:trip_bud/widgets/gallery_grid_view.dart';
 import 'package:trip_bud/screens/trip_detail/edit_trip_places_screen.dart';
 import 'package:trip_bud/screens/trip_detail/schedule_editor_screen.dart';
 
@@ -46,9 +48,9 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Schedule Summary',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context).scheduleTitle,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             ElevatedButton.icon(
               onPressed: () async {
@@ -63,7 +65,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                 }
               },
               icon: const Icon(Icons.edit, size: 18),
-              label: const Text('Edit'),
+              label: Text(AppLocalizations.of(context).edit),
             ),
           ],
         ),
@@ -181,7 +183,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
 
         if (snapshot.hasError || snapshot.data == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Trip Details')),
+            appBar: AppBar(title: Text(AppLocalizations.of(context).tripDetailsTitle)),
             body: Center(child: Text('Error: ${snapshot.error}')),
           );
         }
@@ -193,11 +195,20 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
           child: Scaffold(
             appBar: AppBar(
               title: Text(trip.name),
-              bottom: const TabBar(
+              bottom: TabBar(
                 tabs: [
-                  Tab(icon: Icon(Icons.info), text: 'Overview'),
-                  Tab(icon: Icon(Icons.map), text: 'Map'),
-                  Tab(icon: Icon(Icons.image), text: 'Gallery'),
+                  Tab(
+                    icon: const Icon(Icons.info),
+                    text: AppLocalizations.of(context).overview,
+                  ),
+                  Tab(
+                    icon: const Icon(Icons.map),
+                    text: AppLocalizations.of(context).map,
+                  ),
+                  Tab(
+                    icon: const Icon(Icons.image),
+                    text: AppLocalizations.of(context).gallery,
+                  ),
                 ],
               ),
             ),
@@ -226,18 +237,30 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Trip Stats',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Text(
+                    AppLocalizations.of(context).tripStats,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   _buildStatRow(
-                    'Distance',
+                    AppLocalizations.of(context).distance,
                     '${trip.stats.totalDistance.toStringAsFixed(1)} km',
                   ),
-                  _buildStatRow('Steps', '${trip.stats.totalSteps}'),
-                  _buildStatRow('Photos', '${trip.stats.photosCount}'),
-                  _buildStatRow('Duration', '${trip.schedule.length} days'),
+                  _buildStatRow(
+                    AppLocalizations.of(context).steps,
+                    '${trip.stats.totalSteps}',
+                  ),
+                  _buildStatRow(
+                    AppLocalizations.of(context).photos,
+                    '${trip.stats.photosCount}',
+                  ),
+                  _buildStatRow(
+                    AppLocalizations.of(context).duration,
+                    '${trip.schedule.length} ${AppLocalizations.of(context).days}',
+                  ),
                 ],
               ),
             ),
@@ -245,9 +268,9 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
           const SizedBox(height: 24),
           _buildScheduleSummary(trip),
           const SizedBox(height: 24),
-          const Text(
-            'Description',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            AppLocalizations.of(context).descriptionTitle,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(trip.description),
@@ -255,9 +278,12 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Places',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                AppLocalizations.of(context).placesTitle,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               ElevatedButton.icon(
                 onPressed: () async {
@@ -272,7 +298,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                   }
                 },
                 icon: const Icon(Icons.edit, size: 18),
-                label: const Text('Edit'),
+                label: Text(AppLocalizations.of(context).edit),
               ),
             ],
           ),
@@ -294,9 +320,9 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
             },
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Daily Schedule',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            AppLocalizations.of(context).dailyScheduleTitle,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           ListView.builder(
@@ -389,27 +415,9 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
   }
 
   Widget _buildGalleryTab(Trip trip) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.image, size: 80, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            const Text(
-              'Trip Gallery',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Photos from your trip will appear here',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
-            ),
-          ],
-        ),
-      ),
+    return GalleryGridView(
+      tripId: trip.id,
+      accentColor: const Color.fromARGB(255, 0, 200, 120),
     );
   }
 }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trip_bud/services/auth_service.dart';
+import 'package:trip_bud/l10n/app_localizations.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key});
+  final Function(Locale)? onLocaleChange;
+
+  const ResetPasswordScreen({super.key, this.onLocaleChange});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -22,8 +25,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   void _handleReset() async {
+    final loc = AppLocalizations.of(context);
     if (_emailController.text.isEmpty) {
-      setState(() => _message = 'Please enter your email');
+      setState(() => _message = loc.pleaseEnterEmail);
       return;
     }
 
@@ -70,10 +74,78 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     }
   }
 
+  String _getLanguageName(String code) {
+    switch (code) {
+      case 'en':
+        return 'English';
+      case 'es':
+        return 'Español';
+      case 'pl':
+        return 'Polski';
+      default:
+        return 'English';
+    }
+  }
+
+  void _showLanguageSelector() {
+    final loc = AppLocalizations.of(context);
+    final currentLanguage = Localizations.localeOf(context).languageCode;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(loc.language),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(_getLanguageName('en')),
+              trailing: currentLanguage == 'en'
+                  ? const Icon(Icons.check, color: Colors.green)
+                  : null,
+              onTap: () {
+                widget.onLocaleChange?.call(const Locale('en'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(_getLanguageName('es')),
+              trailing: currentLanguage == 'es'
+                  ? const Icon(Icons.check, color: Colors.green)
+                  : null,
+              onTap: () {
+                widget.onLocaleChange?.call(const Locale('es'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(_getLanguageName('pl')),
+              trailing: currentLanguage == 'pl'
+                  ? const Icon(Icons.check, color: Colors.green)
+                  : null,
+              onTap: () {
+                widget.onLocaleChange?.call(const Locale('pl'));
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Reset Password')),
+      appBar: AppBar(
+        title: Text(loc.resetPasswordTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.language),
+            onPressed: _showLanguageSelector,
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
