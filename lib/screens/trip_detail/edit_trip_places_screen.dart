@@ -83,14 +83,18 @@ class _EditTripPlacesScreenState extends State<EditTripPlacesScreen> {
       if (mounted) {
         Navigator.pop(context, true);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).placesUpdatedSuccessfully)),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).placesUpdatedSuccessfully,
+            ),
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('${AppLocalizations.of(context).error}$e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppLocalizations.of(context).error}$e')),
+        );
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);

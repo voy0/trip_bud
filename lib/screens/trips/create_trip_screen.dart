@@ -72,9 +72,11 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   void _addPlace() {
     if (_placeNameController.text.isEmpty ||
         _placeCountryController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).pleaseFillAllFields)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).pleaseFillAllFields),
+        ),
+      );
       return;
     }
     // prefer current selection coordinates if available
@@ -113,20 +115,24 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
 
   bool _validateStep1() {
     if (_tripNameController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).pleaseEnterTripName)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).pleaseEnterTripName),
+        ),
+      );
       return false;
     }
     if (_startDate == null || _endDate == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).pleaseSelectDates)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).pleaseSelectDates)),
+      );
       return false;
     }
     if (_startDate!.isAfter(_endDate!)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('End date must be after start date')),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).endDateMustBeAfterStart),
+        ),
       );
       return false;
     }
@@ -137,7 +143,9 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     if (_currentStep == 0 && !_validateStep1()) return;
     if (_currentStep == 1 && _places.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please add at least one place')),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).pleaseAddAtLeastOnePlace),
+        ),
       );
       return;
     }
@@ -212,15 +220,21 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Trip created successfully!')),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).tripCreatedSuccessfully),
+          ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${AppLocalizations.of(context).error}${e.toString()}',
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) {

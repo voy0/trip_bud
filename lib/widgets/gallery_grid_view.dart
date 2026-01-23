@@ -106,9 +106,11 @@ class _GalleryGridViewState extends State<GalleryGridView> {
     } catch (e) {
       if (!mounted) return;
       // Error uploading photo - show snackbar
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error uploading: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${AppLocalizations.of(context).errorUploading} $e'),
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -144,17 +146,24 @@ class _GalleryGridViewState extends State<GalleryGridView> {
 
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(AppLocalizations.of(context).photoDeleted)),
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context).photoDeleted),
+                    ),
                   );
                 }
               } catch (e) {
                 if (!mounted) return;
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${AppLocalizations.of(context).error}$e'),
+                  ),
+                );
               }
             },
-            child: Text(AppLocalizations.of(dialogContext).delete, style: const TextStyle(color: Colors.red)),
+            child: Text(
+              AppLocalizations.of(dialogContext).delete,
+              style: const TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),

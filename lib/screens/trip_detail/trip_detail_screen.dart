@@ -183,7 +183,9 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
 
         if (snapshot.hasError || snapshot.data == null) {
           return Scaffold(
-            appBar: AppBar(title: Text(AppLocalizations.of(context).tripDetailsTitle)),
+            appBar: AppBar(
+              title: Text(AppLocalizations.of(context).tripDetailsTitle),
+            ),
             body: Center(child: Text('Error: ${snapshot.error}')),
           );
         }

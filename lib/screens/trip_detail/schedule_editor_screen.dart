@@ -173,14 +173,18 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
       if (mounted) {
         Navigator.pop(context, true);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Schedule updated successfully')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).scheduleUpdatedSuccessfully,
+            ),
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppLocalizations.of(context).error}$e')),
+        );
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -246,7 +250,7 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                                 ),
                               ),
                               const SizedBox(width: 16),
-                              const Text('-'),
+                              Text(AppLocalizations.of(context).dash),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: ElevatedButton.icon(
@@ -415,7 +419,9 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                                             icon: const Icon(
                                               Icons.directions_walk,
                                             ),
-                                            label: Text(AppLocalizations.of(context).walk),
+                                            label: Text(
+                                              AppLocalizations.of(context).walk,
+                                            ),
                                             onPressed:
                                                 _transportationModes[index] !=
                                                     'walking'
@@ -441,7 +447,9 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                                         Expanded(
                                           child: OutlinedButton.icon(
                                             icon: const Icon(Icons.pedal_bike),
-                                            label: Text(AppLocalizations.of(context).bike),
+                                            label: Text(
+                                              AppLocalizations.of(context).bike,
+                                            ),
                                             onPressed:
                                                 _transportationModes[index] !=
                                                     'bicycling'
@@ -469,7 +477,11 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                                             icon: const Icon(
                                               Icons.directions_car,
                                             ),
-                                            label: Text(AppLocalizations.of(context).drive),
+                                            label: Text(
+                                              AppLocalizations.of(
+                                                context,
+                                              ).drive,
+                                            ),
                                             onPressed:
                                                 _transportationModes[index] !=
                                                     'driving'

@@ -45,7 +45,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 navigator.pushReplacementNamed('/login');
               } catch (e) {
                 if (!mounted) return;
-                scaffold.showSnackBar(SnackBar(content: Text('Error: $e')));
+                scaffold.showSnackBar(
+                  SnackBar(
+                    content: Text('${AppLocalizations.of(context).error}$e'),
+                  ),
+                );
               } finally {
                 if (mounted) {
                   setState(() => _isLoading = false);

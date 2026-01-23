@@ -316,33 +316,26 @@ class AppLocalizations {
   );
 
   // Additional Translations - Messages & Dialogs
-  String get placesUpdatedSuccessfully => _translate(
-    'Places updated successfully',
-    'Lugares actualizados exitosamente',
-    'Miejsca zaktualizowane pomyślnie',
-  );
-  String get scheduleUpdatedSuccessfully => _translate(
-    'Schedule updated successfully',
-    'Itinerario actualizado exitosamente',
-    'Harmonogram zaktualizowany pomyślnie',
-  );
-  String get tripDetailsTitle => _translate('Trip Details', 'Detalles del Viaje', 'Szczegóły podróży');
-  String get deletePhoto => _translate('Delete Photo', 'Eliminar Foto', 'Usuń Zdjęcie');
+  String get deletePhoto =>
+      _translate('Delete Photo', 'Eliminar Foto', 'Usuń Zdjęcie');
   String get areYouSureDeletePhoto => _translate(
     'Are you sure you want to delete this photo?',
     '¿Estás seguro de que deseas eliminar esta foto?',
     'Czy na pewno chcesz usunąć to zdjęcie?',
   );
-  String get photoDeleted => _translate('Photo deleted', 'Foto eliminada', 'Zdjęcie usunięte');
+  String get photoDeleted =>
+      _translate('Photo deleted', 'Foto eliminada', 'Zdjęcie usunięte');
   String get photoUploadedSuccessfully => _translate(
     'Photo uploaded successfully!',
     '¡Foto cargada exitosamente!',
     'Zdjęcie przesłane pomyślnie!',
   );
-  String get errorUploading => _translate('Error uploading:', 'Error al cargar:', 'Błąd przesyłania:');
-  String get takePhoto => _translate('Take Photo', 'Tomar Foto', 'Zrób Zdjęcie');
-  String get tripDates => _translate('Trip Dates', 'Fechas del Viaje', 'Daty podróży');
-  String get addedPlaces => _translate('Added Places', 'Lugares Agregados', 'Dodane miejsca');
+  String get errorUploading =>
+      _translate('Error uploading:', 'Error al cargar:', 'Błąd przesyłania:');
+  String get takePhoto =>
+      _translate('Take Photo', 'Tomar Foto', 'Zrób Zdjęcie');
+  String get tripDates =>
+      _translate('Trip Dates', 'Fechas del Viaje', 'Daty podróży');
   String get pleaseFillAllFields => _translate(
     'Please fill all fields',
     'Por favor llena todos los campos',
@@ -374,20 +367,18 @@ class AppLocalizations {
     'Podróż stworzona pomyślnie!',
   );
   String get backButton => _translate('Back', 'Atrás', 'Wróć');
-  String get createTripTitle => _translate('Create Trip', 'Crear Viaje', 'Utwórz podróż');
+  String get createTripTitle =>
+      _translate('Create Trip', 'Crear Viaje', 'Utwórz podróż');
   String get placesYouWillVisit => _translate(
     'Places you\'ll visit:',
     'Lugares que visitarás:',
     'Miejsca które odwiedzisz:',
   );
   String get about => _translate('About', 'Acerca de', 'O aplikacji');
-  String get version => _translate('Version 1.0.0', 'Versión 1.0.0', 'Wersja 1.0.0');
-  String get totalDays => _translate('Total Days:', 'Días Totales:', 'Razem dni:');
-  String get totalDistance => _translate('Total Distance:', 'Distancia Total:', 'Całkowita odległość:');
-  String get travelTime => _translate('Travel Time:', 'Tiempo de Viaje:', 'Czas podróży:');
-  String get walk => _translate('Walk', 'Caminar', 'Pieszo');
-  String get bike => _translate('Bike', 'Bicicleta', 'Rower');
-  String get drive => _translate('Drive', 'Conducir', 'Jazda samochodem');
+  String get version =>
+      _translate('Version 1.0.0', 'Versión 1.0.0', 'Wersja 1.0.0');
+  String get travelTime =>
+      _translate('Travel Time:', 'Tiempo de Viaje:', 'Czas podróży:');
   String get dash => _translate('-', '-', '-');
 
   // Navigation

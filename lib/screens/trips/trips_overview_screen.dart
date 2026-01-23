@@ -82,7 +82,11 @@ class _TripsOverviewScreenState extends State<TripsOverviewScreen> {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+              child: Text(
+                '${AppLocalizations.of(context).error}${snapshot.error}',
+              ),
+            );
           }
 
           final trips = snapshot.data ?? [];
