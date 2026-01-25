@@ -77,11 +77,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   void _showLanguageSelector() {
+    final authService = context.read<AuthService>();
+    final currentUser = authService.getCurrentUser();
     final loc = AppLocalizations.of(context);
     final currentLanguage = Localizations.localeOf(context).languageCode;
+    final onLocaleChange = widget.onLocaleChange;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text(loc.language),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -91,9 +95,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               trailing: currentLanguage == 'en'
                   ? const Icon(Icons.check, color: Colors.green)
                   : null,
-              onTap: () {
-                widget.onLocaleChange?.call(const Locale('en'));
-                Navigator.pop(context);
+              onTap: () async {
+                if (currentUser != null) {
+                  await authService.updateUserLanguage(currentUser.id, 'en');
+                }
+                if (mounted) {
+                  onLocaleChange?.call(const Locale('en'));
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(dialogContext);
+                }
               },
             ),
             ListTile(
@@ -101,9 +111,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               trailing: currentLanguage == 'es'
                   ? const Icon(Icons.check, color: Colors.green)
                   : null,
-              onTap: () {
-                widget.onLocaleChange?.call(const Locale('es'));
-                Navigator.pop(context);
+              onTap: () async {
+                if (currentUser != null) {
+                  await authService.updateUserLanguage(currentUser.id, 'es');
+                }
+                if (mounted) {
+                  onLocaleChange?.call(const Locale('es'));
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(dialogContext);
+                }
               },
             ),
             ListTile(
@@ -111,9 +127,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               trailing: currentLanguage == 'pl'
                   ? const Icon(Icons.check, color: Colors.green)
                   : null,
-              onTap: () {
-                widget.onLocaleChange?.call(const Locale('pl'));
-                Navigator.pop(context);
+              onTap: () async {
+                if (currentUser != null) {
+                  await authService.updateUserLanguage(currentUser.id, 'pl');
+                }
+                if (mounted) {
+                  onLocaleChange?.call(const Locale('pl'));
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(dialogContext);
+                }
               },
             ),
           ],

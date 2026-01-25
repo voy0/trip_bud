@@ -176,6 +176,7 @@ class _LoginScreenState extends State<LoginScreen>
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.language),

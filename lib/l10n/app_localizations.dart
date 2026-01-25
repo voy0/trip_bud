@@ -189,7 +189,7 @@ class AppLocalizations {
   );
   String get walk => _translate('Walk', 'Caminar', 'Pieszo');
   String get bike => _translate('Bike', 'Bicicleta', 'Rower');
-  String get drive => _translate('Drive', 'Conducir', 'Jazda samochodem');
+  String get drive => _translate('Drive', 'Conducir', 'Samochód');
   String get maximumDaysReached => _translate(
     'Maximum days reached',
     'Máximo de días alcanzado',
@@ -252,12 +252,12 @@ class AppLocalizations {
 
   // Trip Status
   String get active => _translate('Active', 'Activo', 'Aktywny');
-  String get planned => _translate('Planned', 'Planeado', 'Zaplanowany');
+  String get planned => _translate('Planned', 'Planeado', 'Zaplanowana');
   String get startTrip => _translate('Start', 'Iniciar', 'Rozpoczynacie');
 
   // Active Trip Screen
   String get endTrip =>
-      _translate('End Trip', 'Terminar Viaje', 'Zakończyć podróż');
+      _translate('End Trip', 'Terminar Viaje', 'Zakończ podróż');
   String get confirmEndTrip => _translate(
     'Are you sure you want to end this trip?',
     '¿Estás seguro de que deseas terminar este viaje?',

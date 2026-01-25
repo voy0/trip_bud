@@ -39,6 +39,24 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Locale _locale = const Locale('en');
+  late AuthService _authService;
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = FirebaseAuthService();
+    _loadUserLanguage();
+  }
+
+  Future<void> _loadUserLanguage() async {
+    final currentUser = _authService.getCurrentUser();
+    if (currentUser != null) {
+      final languageCode = await _authService.getUserLanguage(currentUser.id);
+      if (mounted) {
+        setLocale(Locale(languageCode ?? 'en'));
+      }
+    }
+  }
 
   void setLocale(Locale locale) {
     setState(() {

@@ -5,6 +5,7 @@ class User {
   final String? photoUrl;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String languageCode;
 
   User({
     required this.id,
@@ -13,6 +14,7 @@ class User {
     this.photoUrl,
     required this.createdAt,
     required this.updatedAt,
+    this.languageCode = 'en',
   });
 
   factory User.fromMap(Map<String, dynamic> map, String id) {
@@ -27,6 +29,7 @@ class User {
       updatedAt: map['updatedAt'] is DateTime
           ? map['updatedAt']
           : DateTime.parse(map['updatedAt'].toString()),
+      languageCode: map['languageCode'] ?? 'en',
     );
   }
 
@@ -37,6 +40,7 @@ class User {
       'photoUrl': photoUrl,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
+      'languageCode': languageCode,
     };
   }
 }
