@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trip_bud/services/auth_service.dart';
 import 'package:trip_bud/l10n/app_localizations.dart';
 
@@ -153,6 +154,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 24),
+            // Animated Logo
+            SvgPicture.asset(
+              'assets/tripbud_logo.svg',
+              width: 120,
+              height: 120,
+            ),
+            const SizedBox(height: 32),
             const Text(
               'Reset Your Password',
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),

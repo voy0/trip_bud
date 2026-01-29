@@ -10,6 +10,7 @@ class Trip {
   final List<TripDay> schedule;
   final TripStats stats;
   final bool isActive;
+  final bool isPaused;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -25,6 +26,7 @@ class Trip {
     required this.schedule,
     required this.stats,
     required this.isActive,
+    this.isPaused = false,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -35,12 +37,16 @@ class Trip {
       userId: map['userId'] ?? '',
       name: map['name'] ?? '',
       description: map['description'] ?? '',
-      startDate: map['startDate'] is DateTime
-          ? map['startDate']
-          : DateTime.parse(map['startDate'].toString()),
-      endDate: map['endDate'] is DateTime
-          ? map['endDate']
-          : DateTime.parse(map['endDate'].toString()),
+      startDate: map['startDate'] != null
+          ? (map['startDate'] is DateTime
+                ? map['startDate']
+                : DateTime.parse(map['startDate'].toString()))
+          : DateTime.now(),
+      endDate: map['endDate'] != null
+          ? (map['endDate'] is DateTime
+                ? map['endDate']
+                : DateTime.parse(map['endDate'].toString()))
+          : DateTime.now(),
       places:
           (map['places'] as List?)
               ?.map((p) => Place.fromMap(p as Map<String, dynamic>))
@@ -54,12 +60,17 @@ class Trip {
           [],
       stats: TripStats.fromMap(map['stats'] as Map<String, dynamic>? ?? {}),
       isActive: map['isActive'] ?? false,
-      createdAt: map['createdAt'] is DateTime
-          ? map['createdAt']
-          : DateTime.parse(map['createdAt'].toString()),
-      updatedAt: map['updatedAt'] is DateTime
-          ? map['updatedAt']
-          : DateTime.parse(map['updatedAt'].toString()),
+      isPaused: map['isPaused'] ?? false,
+      createdAt: map['createdAt'] != null
+          ? (map['createdAt'] is DateTime
+                ? map['createdAt']
+                : DateTime.parse(map['createdAt'].toString()))
+          : DateTime.now(),
+      updatedAt: map['updatedAt'] != null
+          ? (map['updatedAt'] is DateTime
+                ? map['updatedAt']
+                : DateTime.parse(map['updatedAt'].toString()))
+          : DateTime.now(),
     );
   }
 
@@ -75,6 +86,7 @@ class Trip {
       'schedule': schedule.map((s) => s.toMap()).toList(),
       'stats': stats.toMap(),
       'isActive': isActive,
+      'isPaused': isPaused,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
@@ -107,9 +119,11 @@ class Place {
       country: map['country'] ?? '',
       latitude: (map['latitude'] ?? 0.0).toDouble(),
       longitude: (map['longitude'] ?? 0.0).toDouble(),
-      plannedDate: map['plannedDate'] is DateTime
-          ? map['plannedDate']
-          : DateTime.parse(map['plannedDate'].toString()),
+      plannedDate: map['plannedDate'] != null
+          ? (map['plannedDate'] is DateTime
+                ? map['plannedDate']
+                : DateTime.parse(map['plannedDate'].toString()))
+          : DateTime.now(),
       plannedDuration: Duration(minutes: map['plannedDurationMinutes'] ?? 60),
     );
   }
@@ -147,9 +161,11 @@ class TripDay {
   factory TripDay.fromMap(Map<String, dynamic> map) {
     return TripDay(
       dayNumber: map['dayNumber'] ?? 0,
-      date: map['date'] is DateTime
-          ? map['date']
-          : DateTime.parse(map['date'].toString()),
+      date: map['date'] != null
+          ? (map['date'] is DateTime
+                ? map['date']
+                : DateTime.parse(map['date'].toString()))
+          : DateTime.now(),
       schedule:
           (map['schedule'] as List?)
               ?.map((s) => ScheduledPlace.fromMap(s as Map<String, dynamic>))
@@ -193,9 +209,11 @@ class ScheduledPlace {
   factory ScheduledPlace.fromMap(Map<String, dynamic> map) {
     return ScheduledPlace(
       placeId: map['placeId'] ?? '',
-      scheduledTime: map['scheduledTime'] is DateTime
-          ? map['scheduledTime']
-          : DateTime.parse(map['scheduledTime'].toString()),
+      scheduledTime: map['scheduledTime'] != null
+          ? (map['scheduledTime'] is DateTime
+                ? map['scheduledTime']
+                : DateTime.parse(map['scheduledTime'].toString()))
+          : DateTime.now(),
       estimatedDuration: Duration(
         minutes: map['estimatedDurationMinutes'] ?? 60,
       ),
@@ -223,6 +241,9 @@ class ScheduledPlace {
 
 class TripStats {
   final double totalDistance;
+  final double distanceWalked;
+  final double distanceDriven;
+  final double distanceBiked;
   final int totalSteps;
   final Duration totalDuration;
   final int photosCount;
@@ -230,6 +251,9 @@ class TripStats {
 
   TripStats({
     required this.totalDistance,
+    this.distanceWalked = 0.0,
+    this.distanceDriven = 0.0,
+    this.distanceBiked = 0.0,
     required this.totalSteps,
     required this.totalDuration,
     required this.photosCount,
@@ -239,6 +263,9 @@ class TripStats {
   factory TripStats.fromMap(Map<String, dynamic> map) {
     return TripStats(
       totalDistance: (map['totalDistance'] ?? 0.0).toDouble(),
+      distanceWalked: (map['distanceWalked'] ?? 0.0).toDouble(),
+      distanceDriven: (map['distanceDriven'] ?? 0.0).toDouble(),
+      distanceBiked: (map['distanceBiked'] ?? 0.0).toDouble(),
       totalSteps: map['totalSteps'] ?? 0,
       totalDuration: Duration(minutes: map['totalDurationMinutes'] ?? 0),
       photosCount: map['photosCount'] ?? 0,
@@ -249,6 +276,9 @@ class TripStats {
   Map<String, dynamic> toMap() {
     return {
       'totalDistance': totalDistance,
+      'distanceWalked': distanceWalked,
+      'distanceDriven': distanceDriven,
+      'distanceBiked': distanceBiked,
       'totalSteps': totalSteps,
       'totalDurationMinutes': totalDuration.inMinutes,
       'photosCount': photosCount,

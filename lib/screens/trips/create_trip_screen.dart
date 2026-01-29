@@ -212,6 +212,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
           timeAheadBehind: Duration.zero,
         ),
         isActive: false,
+        isPaused: false,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );

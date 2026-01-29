@@ -25,11 +25,30 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
   @override
   void initState() {
     super.initState();
-    _daysPerPlace = List.filled(widget.trip.places.length, 1);
+    _daysPerPlace = _buildDaysPerPlace();
     _startDate = widget.trip.startDate;
     _endDate = widget.trip.endDate;
     _transportationModes = _extractExistingModes();
     _loadRouteInfo();
+  }
+
+  List<int> _buildDaysPerPlace() {
+    final counts = List.filled(widget.trip.places.length, 0);
+
+    if (widget.trip.schedule.isEmpty) {
+      return List.filled(widget.trip.places.length, 1);
+    }
+
+    for (final day in widget.trip.schedule) {
+      if (day.schedule.isEmpty) continue;
+      final placeId = day.schedule.first.placeId;
+      final index = widget.trip.places.indexWhere((p) => p.id == placeId);
+      if (index >= 0) {
+        counts[index] += 1;
+      }
+    }
+
+    return counts;
   }
 
   List<String> _extractExistingModes() {
@@ -164,6 +183,7 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
         schedule: schedule,
         stats: widget.trip.stats,
         isActive: widget.trip.isActive,
+        isPaused: widget.trip.isPaused,
         createdAt: widget.trip.createdAt,
         updatedAt: DateTime.now(),
       );
@@ -349,7 +369,7 @@ class _ScheduleEditorScreenState extends State<ScheduleEditorScreen> {
                                   const SizedBox(width: 12),
                                   IconButton(
                                     icon: const Icon(Icons.remove),
-                                    onPressed: _daysPerPlace[index] > 1
+                                    onPressed: _daysPerPlace[index] > 0
                                         ? () {
                                             setState(() {
                                               _daysPerPlace[index]--;

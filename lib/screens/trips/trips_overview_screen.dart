@@ -130,6 +130,11 @@ class _TripsOverviewScreenState extends State<TripsOverviewScreen> {
               return TripCard(
                 trip: trip,
                 onTap: () => _navigateToTripDetail(trip),
+                onRefresh: () {
+                  setState(() {
+                    _loadTrips();
+                  });
+                },
               );
             },
           );
@@ -146,12 +151,275 @@ class _TripsOverviewScreenState extends State<TripsOverviewScreen> {
 class TripCard extends StatelessWidget {
   final Trip trip;
   final VoidCallback onTap;
+  final VoidCallback onRefresh;
 
-  const TripCard({super.key, required this.trip, required this.onTap});
+  const TripCard({
+    super.key,
+    required this.trip,
+    required this.onTap,
+    required this.onRefresh,
+  });
+
+  String _getTripStatus(BuildContext context) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final startDay = DateTime(
+      trip.startDate.year,
+      trip.startDate.month,
+      trip.startDate.day,
+    );
+    final loc = AppLocalizations.of(context);
+
+    // Check for ended trips (manually ended with isActive=false and after being started)
+    if (!trip.isActive && !trip.isPaused && now.isAfter(trip.startDate)) {
+      return 'Ended';
+    }
+
+    if (trip.isActive && trip.isPaused) {
+      return 'Paused';
+    } else if (trip.isActive) {
+      return loc.active;
+    } else if (today.isAtSameMomentAs(startDay)) {
+      return 'Today';
+    } else if (today.isBefore(startDay)) {
+      final daysUntil = startDay.difference(today).inDays;
+      return 'Upcoming in $daysUntil ${daysUntil == 1 ? 'day' : 'days'}';
+    }
+    return loc.planned;
+  }
+
+  Color _getStatusColor() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final startDay = DateTime(
+      trip.startDate.year,
+      trip.startDate.month,
+      trip.startDate.day,
+    );
+
+    // Ended
+    if (!trip.isActive && !trip.isPaused && now.isAfter(trip.startDate)) {
+      return Colors.grey[300]!;
+    }
+
+    if (trip.isActive && trip.isPaused) {
+      return Colors.orange[100]!;
+    } else if (trip.isActive) {
+      return Colors.green[100]!;
+    } else if (today.isAtSameMomentAs(startDay)) {
+      return Colors.purple[100]!;
+    } else if (today.isBefore(startDay)) {
+      return Colors.blue[100]!;
+    }
+    return Colors.grey[100]!;
+  }
+
+  Color _getStatusTextColor() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final startDay = DateTime(
+      trip.startDate.year,
+      trip.startDate.month,
+      trip.startDate.day,
+    );
+
+    // Ended
+    if (!trip.isActive && !trip.isPaused && now.isAfter(trip.startDate)) {
+      return Colors.grey[700]!;
+    }
+
+    if (trip.isActive && trip.isPaused) {
+      return Colors.orange[700]!;
+    } else if (trip.isActive) {
+      return Colors.green[700]!;
+    } else if (today.isAtSameMomentAs(startDay)) {
+      return Colors.purple[700]!;
+    } else if (today.isBefore(startDay)) {
+      return Colors.blue[700]!;
+    }
+    return Colors.grey[700]!;
+  }
+
+  Future<void> _startTrip(BuildContext context) async {
+    try {
+      final tripDataService = context.read<TripDataService>();
+      final updatedTrip = Trip(
+        id: trip.id,
+        userId: trip.userId,
+        name: trip.name,
+        description: trip.description,
+        startDate: trip.startDate,
+        endDate: trip.endDate,
+        places: trip.places,
+        countries: trip.countries,
+        schedule: trip.schedule,
+        stats: trip.stats,
+        isActive: true,
+        isPaused: false,
+        createdAt: trip.createdAt,
+        updatedAt: DateTime.now(),
+      );
+      await tripDataService.updateTrip(updatedTrip);
+      if (context.mounted) {
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (c) => ActiveTripScreen(trip: updatedTrip),
+          ),
+        );
+        onRefresh();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error starting trip: $e')));
+      }
+    }
+  }
+
+  Widget _buildActionButton(BuildContext context) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final startDay = DateTime(
+      trip.startDate.year,
+      trip.startDate.month,
+      trip.startDate.day,
+    );
+    final endDay = DateTime(
+      trip.endDate.year,
+      trip.endDate.month,
+      trip.endDate.day,
+    );
+
+    // Ended state - can resume if before end date
+    if (!trip.isActive && !trip.isPaused && now.isAfter(trip.startDate)) {
+      if (today.isBefore(endDay) || today.isAtSameMomentAs(endDay)) {
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () => _startTrip(context),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(50, 28),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              backgroundColor: Colors.blue,
+            ),
+            child: const Text(
+              'Resume',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+              style: TextStyle(fontSize: 11, color: Colors.white),
+            ),
+          ),
+        );
+      }
+      return const SizedBox.shrink();
+    }
+
+    // Paused state
+    if (trip.isPaused) {
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () => _startTrip(context),
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(50, 28),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            backgroundColor: Colors.orange,
+          ),
+          child: const Text(
+            'Resume',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            style: TextStyle(fontSize: 11, color: Colors.white),
+          ),
+        ),
+      );
+    }
+
+    // Active state - View Active Trip button
+    if (trip.isActive && !trip.isPaused) {
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(builder: (c) => ActiveTripScreen(trip: trip)),
+            );
+            onRefresh();
+          },
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(50, 28),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            backgroundColor: Colors.green,
+          ),
+          child: const Text(
+            'View Trip',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            style: TextStyle(fontSize: 11, color: Colors.white),
+          ),
+        ),
+      );
+    }
+
+    // Today - Start Now button
+    if (today.isAtSameMomentAs(startDay)) {
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () => _startTrip(context),
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(50, 28),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            backgroundColor: Colors.purple,
+          ),
+          child: const Text(
+            'Start Now',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            style: TextStyle(fontSize: 11, color: Colors.white),
+          ),
+        ),
+      );
+    }
+
+    // Upcoming - Start Early button
+    if (today.isBefore(startDay) &&
+        (today.isBefore(endDay) || today.isAtSameMomentAs(endDay))) {
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () => _startTrip(context),
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(50, 28),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            backgroundColor: const Color.fromARGB(255, 0, 200, 120),
+          ),
+          child: const Text(
+            'Start Early',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            style: TextStyle(fontSize: 11, color: Colors.white),
+          ),
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
     final daysDifference = trip.endDate.difference(trip.startDate).inDays;
 
     return Card(
@@ -192,7 +460,7 @@ class TripCard extends StatelessWidget {
           ],
         ),
         trailing: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 85),
+          constraints: const BoxConstraints(maxWidth: 100),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -200,41 +468,23 @@ class TripCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                 decoration: BoxDecoration(
-                  color: trip.isActive ? Colors.green[100] : Colors.grey[100],
+                  color: _getStatusColor(),
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: Text(
-                  trip.isActive ? loc.active : loc.planned,
+                  _getTripStatus(context),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
                   style: TextStyle(
-                    color: trip.isActive ? Colors.green[700] : Colors.grey[700],
+                    color: _getStatusTextColor(),
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              if (!trip.isActive)
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (c) => ActiveTripScreen(trip: trip),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(50, 20),
-                      padding: EdgeInsets.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      backgroundColor: const Color.fromARGB(255, 0, 200, 120),
-                    ),
-                    child: const Text(
-                      'Start',
-                      style: TextStyle(fontSize: 10, color: Colors.white),
-                    ),
-                  ),
-                ),
+              const SizedBox(height: 4),
+              _buildActionButton(context),
             ],
           ),
         ),

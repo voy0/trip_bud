@@ -7,6 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:trip_bud/models/hive_models.dart';
 import 'package:trip_bud/services/auth_service.dart';
 import 'package:trip_bud/services/trip_data_service.dart';
+import 'package:trip_bud/services/user_preferences_service.dart';
 import 'package:trip_bud/screens/auth/login_screen.dart';
 import 'package:trip_bud/screens/auth/register_screen.dart';
 import 'package:trip_bud/screens/auth/reset_password_screen.dart';
@@ -26,6 +27,10 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(HiveTripAdapter());
   Hive.registerAdapter(HivePlaceAdapter());
+
+  // Initialize user preferences
+  final userPreferences = UserPreferencesService();
+  await userPreferences.init();
 
   runApp(const MyApp());
 }

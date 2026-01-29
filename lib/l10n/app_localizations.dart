@@ -281,6 +281,11 @@ class AppLocalizations {
   // Trip Stats & Schedule
   String get stats => _translate('Statistics', 'Estadísticas', 'Statystyka');
   String get distance => _translate('Distance', 'Distancia', 'Odległość');
+  String get distanceWalked => _translate('Walked', 'Caminado', 'Pieszo');
+  String get distanceDriven => _translate('Driven', 'Conducido', 'Pojazd');
+  String get distanceBiked => _translate('Biked', 'En Bici', 'Rower');
+  String get bikingMode => _translate('Biking', 'Ciclismo', 'Rower');
+  String get totalDistanceLabel => _translate('Total', 'Total', 'Razem');
   String get duration => _translate('Duration', 'Duración', 'Czas trwania');
   String get pace => _translate('Pace', 'Ritmo', 'Tempo');
   String get elevation => _translate('Elevation', 'Elevación', 'Elevacja');
@@ -332,6 +337,16 @@ class AppLocalizations {
   );
   String get errorUploading =>
       _translate('Error uploading:', 'Error al cargar:', 'Błąd przesyłania:');
+  String get addPhoto =>
+      _translate('Add Photo', 'Agregar Foto', 'Dodaj zdjęcie');
+  String get photosAlreadyAdded => _translate(
+    'Some photos were already added',
+    'Algunas fotos ya fueron agregadas',
+    'Niektóre zdjęcia zostały już dodane',
+  );
+  String get deletePhotos =>
+      _translate('Delete Photos', 'Eliminar Fotos', 'Usuń zdjęcia');
+  String get done => _translate('Done', 'Hecho', 'Gotowe');
   String get takePhoto =>
       _translate('Take Photo', 'Tomar Foto', 'Zrób Zdjęcie');
   String get tripDates =>
@@ -390,6 +405,16 @@ class AppLocalizations {
   String get confirm => _translate('Confirm', 'Confirmar', 'Potwierdź');
   String get ok => _translate('OK', 'OK', 'OK');
   String get delete => _translate('Delete', 'Eliminar', 'Usuń');
+
+  // User Preferences
+  String get height => _translate('Height', 'Altura', 'Wzrost');
+  String get heightCm =>
+      _translate('Height (cm)', 'Altura (cm)', 'Wzrost (cm)');
+  String get heightUpdated => _translate(
+    'Height updated successfully',
+    'Altura actualizada correctamente',
+    'Wzrost zaktualizowany pomyślnie',
+  );
 
   // Error Messages
   String get error => _translate('Error: ', 'Error: ', 'Błąd: ');

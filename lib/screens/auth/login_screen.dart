@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trip_bud/services/auth_service.dart';
 import 'package:trip_bud/l10n/app_localizations.dart';
 
@@ -193,37 +194,17 @@ class _LoginScreenState extends State<LoginScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 48),
+                const SizedBox(height: 10),
                 // Animated Logo
                 ScaleTransition(
                   scale: _fadeAnimation,
-                  child: Container(
+                  child: SvgPicture.asset(
+                    'assets/tripbud_logo.svg',
                     width: 100,
                     height: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [
-                          _accentColor,
-                          _accentColor.withValues(alpha: 0.7),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: _accentColor.withValues(alpha: 0.3),
-                          blurRadius: 20,
-                          spreadRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Icon(Icons.public, size: 60, color: Colors.white),
-                    ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
                 Text(
                   loc.loginTitle,
                   textAlign: TextAlign.center,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trip_bud/services/auth_service.dart';
+import 'package:trip_bud/services/user_preferences_service.dart';
 import 'package:trip_bud/l10n/app_localizations.dart';
 
 class UserProfileScreen extends StatefulWidget {
@@ -14,7 +15,23 @@ class UserProfileScreen extends StatefulWidget {
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
   bool _isLoading = false;
+  late UserPreferencesService _userPreferences;
+  int _userHeight = 175;
   final Color _accentColor = const Color.fromARGB(255, 0, 200, 120);
+
+  @override
+  void initState() {
+    super.initState();
+    _userPreferences = UserPreferencesService();
+    _initUserPreferences();
+  }
+
+  Future<void> _initUserPreferences() async {
+    await _userPreferences.init();
+    setState(() {
+      _userHeight = _userPreferences.getUserHeight();
+    });
+  }
 
   void _handleLogout() async {
     final loc = AppLocalizations.of(context);
@@ -144,6 +161,54 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
+  void _showHeightDialog() {
+    final loc = AppLocalizations.of(context);
+    final heightController = TextEditingController(
+      text: _userHeight.toString(),
+    );
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(loc.heightCm),
+        content: TextField(
+          controller: heightController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            hintText: '175',
+            labelText: loc.heightCm,
+            suffixText: 'cm',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(loc.cancel),
+          ),
+          TextButton(
+            onPressed: () async {
+              final newHeight = int.tryParse(heightController.text);
+              if (newHeight != null && newHeight > 0) {
+                await _userPreferences.setUserHeight(newHeight);
+                if (!mounted) return;
+                setState(() {
+                  _userHeight = newHeight;
+                });
+                // ignore: use_build_context_synchronously
+                Navigator.pop(dialogContext);
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(content: Text(loc.heightUpdated)),
+                );
+              }
+            },
+            child: Text(loc.save),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
@@ -231,6 +296,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: _showLanguageSelector,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Height Setting
+                  ListTile(
+                    leading: const Icon(Icons.height),
+                    title: Text(loc.height),
+                    subtitle: Text('$_userHeight cm'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: _showHeightDialog,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

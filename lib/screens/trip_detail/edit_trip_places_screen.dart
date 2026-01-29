@@ -74,6 +74,7 @@ class _EditTripPlacesScreenState extends State<EditTripPlacesScreen> {
         schedule: widget.trip.schedule,
         stats: widget.trip.stats,
         isActive: widget.trip.isActive,
+        isPaused: widget.trip.isPaused,
         createdAt: widget.trip.createdAt,
         updatedAt: DateTime.now(),
       );

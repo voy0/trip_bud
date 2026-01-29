@@ -20,6 +20,7 @@ class TripDetailScreen extends StatefulWidget {
 
 class _TripDetailScreenState extends State<TripDetailScreen> {
   late Future<Trip?> _tripFuture;
+  final TextEditingController _descriptionController = TextEditingController();
 
   @override
   void initState() {
@@ -27,9 +28,78 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     _loadTrip();
   }
 
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
   void _loadTrip() {
     final tripDataService = context.read<TripDataService>();
-    _tripFuture = tripDataService.getTrip(widget.tripId);
+    setState(() {
+      _tripFuture = tripDataService.getTrip(widget.tripId);
+    });
+  }
+
+  Future<void> _editDescription(Trip trip) async {
+    _descriptionController.text = trip.description;
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(AppLocalizations.of(dialogContext).descriptionTitle),
+        content: TextField(
+          controller: _descriptionController,
+          maxLines: 4,
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(dialogContext).descriptionTitle,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(AppLocalizations.of(dialogContext).cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(AppLocalizations.of(dialogContext).save),
+          ),
+        ],
+      ),
+    );
+
+    if (saved != true) return;
+
+    if (!mounted) return;
+
+    try {
+      final tripDataService = context.read<TripDataService>();
+      final updatedTrip = Trip(
+        id: trip.id,
+        userId: trip.userId,
+        name: trip.name,
+        description: _descriptionController.text.trim(),
+        startDate: trip.startDate,
+        endDate: trip.endDate,
+        places: trip.places,
+        countries: trip.countries,
+        schedule: trip.schedule,
+        stats: trip.stats,
+        isActive: trip.isActive,
+        isPaused: trip.isPaused,
+        createdAt: trip.createdAt,
+        updatedAt: DateTime.now(),
+      );
+
+      await tripDataService.updateTrip(updatedTrip);
+      if (mounted) {
+        _loadTrip();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${AppLocalizations.of(context).error}$e')),
+      );
+    }
   }
 
   Widget _buildScheduleSummary(Trip trip) {
@@ -45,29 +115,36 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              AppLocalizations.of(context).scheduleTitle,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            ElevatedButton.icon(
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ScheduleEditorScreen(trip: trip),
-                  ),
-                );
-                if (result == true) {
-                  _loadTrip();
-                }
-              },
-              icon: const Icon(Icons.edit, size: 18),
-              label: Text(AppLocalizations.of(context).edit),
-            ),
-          ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context).scheduleTitle,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ScheduleEditorScreen(trip: trip),
+                    ),
+                  );
+                  if (result == true) {
+                    _loadTrip();
+                  }
+                },
+                icon: const Icon(Icons.edit, size: 18),
+                label: Text(AppLocalizations.of(context).edit),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 16),
         Card(
@@ -197,6 +274,69 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
           child: Scaffold(
             appBar: AppBar(
               title: Text(trip.name),
+              actions: [
+                PopupMenuButton<String>(
+                  onSelected: (value) async {
+                    if (value == 'delete') {
+                      final tripService = context.read<TripDataService>();
+                      final cancelLabel = AppLocalizations.of(context).cancel;
+                      final deleteLabel = AppLocalizations.of(context).delete;
+                      final navigator = Navigator.of(context);
+                      final scaffoldMessenger = ScaffoldMessenger.of(context);
+                      final confirmed = await showDialog<bool?>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(deleteLabel),
+                            content: const Text(
+                              'Are you sure you want to delete this trip?',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: Text(cancelLabel),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: const Text('Delete'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      if (confirmed == true) {
+                        try {
+                          await tripService.deleteTrip(trip.id);
+                          if (mounted) {
+                            navigator.pop();
+                            scaffoldMessenger.showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  'Trip deleted successfully',
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            scaffoldMessenger.showSnackBar(
+                              SnackBar(
+                                content: const Text('Error deleting trip'),
+                              ),
+                            );
+                          }
+                        }
+                      }
+                    }
+                  },
+                  itemBuilder: (BuildContext context) => [
+                    PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Text(AppLocalizations.of(context).delete),
+                    ),
+                  ],
+                ),
+              ],
               bottom: TabBar(
                 tabs: [
                   Tab(
@@ -248,8 +388,20 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                   ),
                   const SizedBox(height: 16),
                   _buildStatRow(
-                    AppLocalizations.of(context).distance,
+                    AppLocalizations.of(context).totalDistanceLabel,
                     '${trip.stats.totalDistance.toStringAsFixed(1)} km',
+                  ),
+                  _buildStatRow(
+                    AppLocalizations.of(context).distanceWalked,
+                    '${trip.stats.distanceWalked.toStringAsFixed(1)} km',
+                  ),
+                  _buildStatRow(
+                    AppLocalizations.of(context).distanceDriven,
+                    '${trip.stats.distanceDriven.toStringAsFixed(1)} km',
+                  ),
+                  _buildStatRow(
+                    AppLocalizations.of(context).distanceBiked,
+                    '${trip.stats.distanceBiked.toStringAsFixed(1)} km',
                   ),
                   _buildStatRow(
                     AppLocalizations.of(context).steps,
@@ -270,9 +422,22 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
           const SizedBox(height: 24),
           _buildScheduleSummary(trip),
           const SizedBox(height: 24),
-          Text(
-            AppLocalizations.of(context).descriptionTitle,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context).descriptionTitle,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: () => _editDescription(trip),
+                icon: const Icon(Icons.edit, size: 18),
+                label: Text(AppLocalizations.of(context).edit),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Text(trip.description),
@@ -317,28 +482,6 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                   leading: CircleAvatar(child: Text('${index + 1}')),
                   title: Text(place.name),
                   subtitle: Text(place.country),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 24),
-          Text(
-            AppLocalizations.of(context).dailyScheduleTitle,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: trip.schedule.length,
-            itemBuilder: (context, index) {
-              final day = trip.schedule[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ListTile(
-                  leading: CircleAvatar(child: Text('Day ${day.dayNumber}')),
-                  title: Text('${day.date.month}/${day.date.day}'),
-                  subtitle: Text('${day.photoIds.length} photos'),
                 ),
               );
             },
