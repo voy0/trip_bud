@@ -1,6 +1,4 @@
-# TripBud - Final Documentation
-
-<img src="tripbud_logo.svg" alt="TripBud Logo" width="200">
+# <img src="./assets/tripbud_logo.svg" alt="TripBud Logo" width="100"/> TripBud - Final Documentation
 
 ## Project Description
 
