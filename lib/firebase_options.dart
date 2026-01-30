@@ -64,7 +64,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '274607135930',
     projectId: 'tripbud-3799b',
     storageBucket: 'tripbud-3799b.firebasestorage.app',
-    iosClientId: '274607135930-15sk52sqgg3mh13tnc6fs8se3pchj0ft.apps.googleusercontent.com',
+    iosClientId:
+        '274607135930-15sk52sqgg3mh13tnc6fs8se3pchj0ft.apps.googleusercontent.com',
     iosBundleId: 'com.example.tripBud',
   );
 
@@ -74,7 +75,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '274607135930',
     projectId: 'tripbud-3799b',
     storageBucket: 'tripbud-3799b.firebasestorage.app',
-    iosClientId: '274607135930-15sk52sqgg3mh13tnc6fs8se3pchj0ft.apps.googleusercontent.com',
+    iosClientId:
+        '274607135930-15sk52sqgg3mh13tnc6fs8se3pchj0ft.apps.googleusercontent.com',
     iosBundleId: 'com.example.tripBud',
   );
 
@@ -87,5 +89,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'tripbud-3799b.firebasestorage.app',
     measurementId: 'G-X16VFRNSL4',
   );
-
 }
