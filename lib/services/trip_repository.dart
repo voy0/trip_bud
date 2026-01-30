@@ -11,10 +11,9 @@ class TripRepository {
     _box = await Hive.openBox<HiveTrip>(_boxName);
   }
 
-  /// Save trip locally and queue for sync
+  /// Save trip locally
   Future<void> saveTrip(HiveTrip trip) async {
     await _box.put(trip.id, trip);
-    _queueSync(trip.id);
   }
 
   /// Get single trip from local storage
@@ -32,23 +31,6 @@ class TripRepository {
     await _box.delete(id);
   }
 
-  /// Sync all trips with Firebase
-  Future<void> syncWithFirebase() async {
-    // In a full implementation, sync logic would be implemented here
-    for (var _ in _box.values) {
-      try {
-        // Convert places list to serializable format
-        // Convert places list to serializable format for Firebase sync
-        // This code is prepared for future Firebase integration
-
-        // Queue for Firebase sync
-        // Trip queued for sync
-      } catch (e) {
-        // Sync failed - continue silently
-      }
-    }
-  }
-
   /// Clear all local data
   Future<void> clearAll() async {
     await _box.clear();
@@ -56,9 +38,4 @@ class TripRepository {
 
   /// Get box reference for direct operations
   Box<HiveTrip> getBox() => _box;
-
-  void _queueSync(String tripId) {
-    // Implement background sync queue
-    // Trip queued for sync
-  }
 }

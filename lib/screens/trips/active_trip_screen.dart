@@ -77,7 +77,7 @@ class _ActiveTripScreenState extends State<ActiveTripScreen> {
         });
       }
     } catch (e) {
-      // Error loading photo count - continue silently
+      // Silent failure
     }
   }
 

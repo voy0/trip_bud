@@ -91,7 +91,7 @@ class TripStatisticsService {
       plannedDuration: trip.endDate.difference(trip.startDate),
       actualDuration: actualDuration,
       stepsCount: _estimateSteps(actualDistance),
-      elevation: 0, // Would integrate with elevation API
+      elevation: 0,
       averagePace: actualDuration.inSeconds > 0
           ? actualDistance / (actualDuration.inSeconds / 3600)
           : 0,

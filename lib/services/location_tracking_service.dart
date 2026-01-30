@@ -44,7 +44,6 @@ class LocationTrackingService {
         desiredAccuracy: LocationAccuracy.bestForNavigation,
       );
     } catch (e) {
-      // Error getting location - continue silently
       return null;
     }
   }

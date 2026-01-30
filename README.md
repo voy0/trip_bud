@@ -1,41 +1,37 @@
 # TripBud - Final Documentation
 
+<img src="tripbud_logo.svg" alt="TripBud Logo" width="200">
+
 ## Project Description
 
 **TripBud** is a cross-platform Flutter application for planning, organizing, and tracking multi-day trips. Features include Firebase authentication, real-time GPS tracking with triple-mode distance monitoring (walking/driving/biking), pedometer integration, photo galleries, trip statistics, and offline-first data persistence with Hive. Material Design 3 compliant with support for 3 languages (English, Spanish, Polish).
 
-**Status:** Production Ready | **Version:** 1.0.1 | **Target Platform:** Android, iOS, Web, Windows, Linux, macOS
-
----
-
-## Key Features
+## Integrations
 
 **Authentication & User Management**
 
-- Firebase Email/Password & Google Sign-In
-- Password reset, user profiles, language preferences persistent storage
+- Firebase Email/Password & Google Sign-in and Log-in
+- Password reset, user profile, language preferences, user's height for pedometer calculation
 
 **Trip Tracking & Distance Monitoring**
 
-- Multi-day itinerary planning with place-to-day scheduling
+- Multi-day itinerary planning with days-at-place scheduling
 - Real-time GPS tracking with speed-based categorization
 - Triple-mode distance: Walked (GPS < 20 km/h), Driven (> 20 km/h), Biked (toggle mode)
 - Pedometer integration for step counting with height-based stride calculation
-- Automatic data persistence on screen exit/back button/dispose
 
 **Data Management**
 
 - Cloud Firestore for real-time sync
 - Hive offline-first local database
-- Photo storage via Firebase Storage
-- Google Places API integration with autocomplete
+- Local photo storage
+- Google Places API integration with autocomplete suggestions
 
 **UI/UX**
 
 - Material Design 3 with custom animations (fade/slide/scale transitions)
 - Interactive Google Maps with polyline routes
 - Multi-tab interface (Schedule, Map, Gallery)
-- Responsive across all platforms
 
 ---
 
@@ -52,26 +48,29 @@
 
 ---
 
-## Optional Requirements (50pt scale)
+## Required project assumptions
 
-| Requirement                | Points | Status                                                           |
-| -------------------------- | ------ | ---------------------------------------------------------------- |
-| **Platform Support**       | 25/25  | ✅ All 5 platforms (Android, iOS, Web, Windows, Linux)           |
-| **Animations**             | 5/10   | ✅ Custom fade/slide/scale transitions (AnimationController)     |
-| **Tests**                  | 1/20   | ⏳ Widget test template in place                                 |
-| **Firebase Auth**          | 10/25  | ✅ Email/password & Google OAuth fully implemented               |
-| **Internationalization**   | 10/10  | ✅ 3 languages, 120+ translation keys, persistent preferences    |
-| **Local Data Persistence** | 15/15  | ✅ Hive offline database with auto-sync to Firestore             |
-| **Platform Channels**      | 5/20   | ✅ Using pub packages (image_picker, geolocator, pedometer)      |
-| **Custom Widgets**         | 5/5    | ✅ PlaceAutocomplete, DateRangePicker, PlaceMap, GalleryGridView |
-| **Material Design**        | 5/5    | ✅ Full Material Design 3 compliance                             |
-| **Code Quality**           | —      | ✅ 0 analyzer errors/warnings, 100% null-safe                    |
+| Requirement         | Status                                                        |
+| ------------------- | ------------------------------------------------------------- |
+| **Code Quality**    | 0 analyzer errors/warnings, 100% null-safe                    |
+| **Custom Widgets**  | PlaceAutocomplete, DateRangePicker, PlaceMap, GalleryGridView |
+| **Material Design** | Full Material Design 3 compliance                             |
 
-**Total Achieved:** ~65/100 points
+## Optional Requirements
+
+| Requirement                         | Status                                                    |
+| ----------------------------------- | --------------------------------------------------------- |
+| **Platform Support**                | Android, Web                                              |
+| **Animations**                      | Custom fade/slide/scale transitions (AnimationController) |
+| **Firebase Auth**                   | Email/password & Google OAuth fully implemented           |
+| **Multi-step form with validation** | Trip creation                                             |
+| **Platform Channels**               | Using pub packages (image_picker, geolocator, pedometer)  |
+| **Internationalization**            | 3 languages (English, Polish, Spanish)                    |
+| **Local Data Persistence**          | Hive offline database with auto-sync to Firestore         |
 
 ---
 
-## Quick Start
+## Instructions for Quick Start
 
 ### Prerequisites
 
@@ -93,17 +92,13 @@ flutter pub get
 
 # 4. Run
 flutter run                    # Mobile/Web
-flutter run -d windows         # Desktop
 ```
 
-### Build for Production
+### Build for app file
 
 ```bash
 flutter build apk              # Android
-flutter build appbundle        # Android Bundle
-flutter build ios              # iOS
 flutter build web              # Web
-flutter build windows          # Windows
 ```
 
 ---
@@ -183,6 +178,10 @@ lib/
   - Else if speed > 20: add to `distanceDriven`
   - Else: add to `distanceWalked`
 
+**Optimizations:**
+
+Lazy loading, local caching, debounced search (500ms), GPS filtering (10m)
+
 **Data Persistence:**
 
 - Automatic save on PopScope callback (back button)
@@ -198,34 +197,3 @@ lib/
 ```
 
 ---
-
-## Performance & Quality
-
-- **Static Analysis:** ✅ 0 errors, 0 warnings
-- **Code Metrics:** 2,000+ production lines, 8 services, 9 screens, 4 widgets
-- **Optimizations:** Lazy loading, local caching, debounced search (500ms), GPS filtering (10m)
-- **Testing:** Widget test template ready for expansion
-
----
-
-## Known Limitations & Future Work
-
-**Limitations:**
-
-- Custom platform channels not implemented (using pub packages)
-- Unit/widget tests not implemented
-- Dark mode not configured
-- CI/CD not set up
-
-**Recommended Enhancements:**
-
-1. Unit & widget test suite
-2. Push notifications
-3. Trip sharing & collaboration
-4. Custom statistics dashboard
-5. Trip export (PDF)
-6. CI/CD pipeline with GitHub Actions
-
----
-
-**Last Updated:** January 29, 2026 | **License:** Private/Proprietary

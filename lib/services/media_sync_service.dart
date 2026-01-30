@@ -33,7 +33,6 @@ class MediaSyncService {
       );
       return files;
     } catch (e) {
-      // Error fetching trip photos - continue silently
       return [];
     }
   }
